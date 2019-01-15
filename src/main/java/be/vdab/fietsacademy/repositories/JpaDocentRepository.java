@@ -14,5 +14,9 @@ class JpaDocentRepository implements DocentRepository {
 	@Override
 	public Optional<Docent> read(long id) {
 		return Optional.ofNullable(manager.find(Docent.class, id));
+	}
+	@Override
+	public void create(Docent docent) {
+		manager.persist(docent);
 	}	
 }
