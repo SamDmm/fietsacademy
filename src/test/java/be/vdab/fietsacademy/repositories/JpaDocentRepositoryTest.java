@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.math.BigDecimal;
 
+import javax.persistence.EntityManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +34,7 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 	
 	@Autowired
 	private JpaDocentRepository repository;
+	
 	private long idVanTestMan() {
 		return super.jdbcTemplate.queryForObject("select id from docenten where voornaam = 'testM'", Long.class);
 	}
@@ -66,5 +69,16 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 		assertEquals(aantalDocenten + 1, super.countRowsInTable("docenten"));
 		assertNotEquals(0, docent.getId());
 		assertEquals(1, super.countRowsInTableWhere(DOCENTEN, "id=" + docent.getId()));
+	}
+	@Autowired
+	private EntityManager manager;
+	@Test
+	public void delete() {
+		long id = idVanTestMan();
+		int aantalDocenten = super.countRowsInTable(DOCENTEN);
+		repository.delete(id);
+		manager.flush();
+		assertEquals(aantalDocenten - 1, super.countRowsInTable(DOCENTEN));
+		assertEquals(0, super.countRowsInTableWhere(DOCENTEN, "id=" + id));
 	}
 }

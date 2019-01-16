@@ -4,8 +4,11 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Repository;
+
 import be.vdab.fietsacademy.entities.Docent;
 
+@Repository
 class JpaDocentRepository implements DocentRepository {
 	private final EntityManager manager;
 	JpaDocentRepository(EntityManager manager) {
@@ -18,5 +21,9 @@ class JpaDocentRepository implements DocentRepository {
 	@Override
 	public void create(Docent docent) {
 		manager.persist(docent);
-	}	
+	}
+	@Override
+	public void delete(long id) {
+		read(id).ifPresent(docent -> manager.remove(docent));
+	}
 }
