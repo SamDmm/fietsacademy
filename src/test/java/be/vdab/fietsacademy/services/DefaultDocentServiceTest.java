@@ -1,21 +1,24 @@
 package be.vdab.fietsacademy.services;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import be.vdab.fietsacademy.entities.Docent;
 import be.vdab.fietsacademy.enums.Geslacht;
 import be.vdab.fietsacademy.exceptions.DocentNietGevondenException;
 import be.vdab.fietsacademy.repositories.DocentRepository;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultDocentServiceTest {
 	private DefaultDocentService service;
 	@Mock
