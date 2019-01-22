@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Sql("/insertCampus.sql")
 @Sql("/insertDocent.sql")
 public class DefaultDocentServiceIntegrationTest extends AbstractTransactionalJUnit4SpringContextTests {
 	@Autowired

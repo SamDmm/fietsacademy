@@ -22,19 +22,23 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import be.vdab.fietsacademy.entities.Campus;
 import be.vdab.fietsacademy.entities.Docent;
 import be.vdab.fietsacademy.enums.Geslacht;
 import be.vdab.fietsacademy.queryresults.AantalDocentenPerWedde;
 import be.vdab.fietsacademy.queryresults.IdEnEmailAdres;
+import be.vdab.fietsacademy.valueobjects.Adres;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
+@Sql("/insertCampus.sql")
 @Sql("/insertDocent.sql")
 @Import(JpaDocentRepository.class)
 public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static final String DOCENTEN = "docenten";
 	private Docent docent;
+	private Campus campus;
 	
 	@Autowired
 	private JpaDocentRepository repository;
@@ -44,7 +48,8 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 	}
 	@Before
 	public void before() {
-		docent = new Docent("test", "test", BigDecimal.TEN, "test@fietsacademy.be", Geslacht.MAN);
+		campus = new Campus("test", new Adres("test", "test", "test", "test"));
+		docent = new Docent("test", "test", BigDecimal.TEN, "test@fietsacademy.be", Geslacht.MAN, campus);
 	}
 	@Test
 	public void read() {
@@ -68,11 +73,13 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 	}
 	@Test
 	public void create() {
+		manager.persist(campus);
 		int aantalDocenten = super.countRowsInTable(DOCENTEN);
 		repository.create(docent);
 		assertEquals(aantalDocenten + 1, super.countRowsInTable("docenten"));
 		assertNotEquals(0, docent.getId());
 		assertEquals(1, super.countRowsInTableWhere(DOCENTEN, "id=" + docent.getId()));
+		assertEquals(campus.getId(), super.jdbcTemplate.queryForObject("select campusid from docenten where id=?", Long.class, docent.getId()).longValue());
 	}
 	@Autowired
 	private EntityManager manager;
@@ -148,9 +155,15 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 	}
 	@Test
 	public void bijnaamToevoegen() {
+		manager.persist(campus);
 		repository.create(docent);
 		docent.addBijnaam("test");
 		manager.flush();
 		assertEquals("test", super.jdbcTemplate.queryForObject("select bijnaam from docentenbijnamen where docentid=?", String.class, docent.getId()));
+	}
+	@Test
+	public void campuslazyloaded() {
+		Docent docent = repository.read(idVanTestMan()).get();
+		assertEquals("test", docent.getCampus().getNaam());
 	}
 }
