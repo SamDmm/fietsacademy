@@ -140,4 +140,17 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 		BigDecimal nieuweWedde = super.jdbcTemplate.queryForObject("select wedde from docenten where id=?", BigDecimal.class, idVanTestMan());
 		assertEquals(0, BigDecimal.valueOf(1_100).compareTo(nieuweWedde));
 	}
+	@Test
+	public void bijnamenLezen() {
+		Docent docent = repository.read(idVanTestMan()).get();
+		assertEquals(1, docent.getBijnamen().size());
+		assertTrue(docent.getBijnamen().contains("test"));
+	}
+	@Test
+	public void bijnaamToevoegen() {
+		repository.create(docent);
+		docent.addBijnaam("test");
+		manager.flush();
+		assertEquals("test", super.jdbcTemplate.queryForObject("select bijnaam from docentenbijnamen where docentid=?", String.class, docent.getId()));
+	}
 }
