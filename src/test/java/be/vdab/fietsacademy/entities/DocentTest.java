@@ -2,6 +2,7 @@ package be.vdab.fietsacademy.entities;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -16,10 +17,14 @@ public class DocentTest {
 	private final static BigDecimal ORIGINELE_WEDDE = BigDecimal.valueOf(200);
 	private Docent docent1;
 	private Campus campus1;
+	private Docent nogEensDocent1;
+	private Docent docent2;
 	@Before
 	public void before() {
 		campus1 = new Campus("test", new Adres("test", "test", "test", "test"));
-		docent1 = new Docent("test", "test", ORIGINELE_WEDDE, "test@fietsacademy.be", Geslacht.MAN, campus1);
+		docent1 = new Docent("test", "test", ORIGINELE_WEDDE, "test@fietsacademy.be", Geslacht.MAN/* , campus1 */);
+		nogEensDocent1 = new Docent("test", "test", ORIGINELE_WEDDE, "test@fietsacademy.be", Geslacht.MAN);
+		docent2 = new Docent("test2", "test2", ORIGINELE_WEDDE, "test2@fietsacademy.be", Geslacht.MAN);
 	}
 	@Test
 	public void opslag() {
@@ -80,5 +85,30 @@ public class DocentTest {
 		assertFalse(docent1.removeBijnaam("test2"));
 		assertEquals(1, docent1.getBijnamen().size());
 		assertTrue(docent1.getBijnamen().contains("test"));
+	}
+	@Test
+	public void meerdereDocentenKunnenTotDezelfdeCampusBehoren() {
+		assertTrue(campus1.add(docent1));
+		assertTrue(campus1.add(docent2));
+	}
+	@Test
+	public void docentenZijnGelijkAlsHunEmailAdressenGelijkZijn() {
+		assertEquals(docent1, nogEensDocent1);
+	}
+	@Test
+	public void docentenZijnVerschillendAlsHunEmailAdressenVerschillen() {
+		assertNotEquals(docent1, docent2);
+	}
+	@Test
+	public void eenDocentVerschiltVanNull() {
+		assertNotEquals(docent1, null);
+	}
+	@Test
+	public void eenDocentVerschiltVanEenAnderTypeObject() {
+		assertNotEquals(docent1, "");
+	}
+	@Test
+	public void gelijkeDocentenGevenDezelfdeHashCode() {
+		assertEquals(docent1.hashCode(), nogEensDocent1.hashCode());
 	}
 }

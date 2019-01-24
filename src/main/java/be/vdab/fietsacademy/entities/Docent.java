@@ -14,12 +14,10 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import be.vdab.fietsacademy.enums.Geslacht;
@@ -40,18 +38,18 @@ public class Docent implements Serializable {
 	@CollectionTable(name = "docentenbijnamen", joinColumns = @JoinColumn(name = "docentid"))
 	@Column(name = "bijnaam")
 	private Set<String> bijnamen;
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "campusid")
-	private Campus campus;
+//	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+//	@JoinColumn(name = "campusid")
+//	private Campus campus;
 	
-	public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht, Campus campus) {
+	public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht/* , Campus campus */) {
 		this.voornaam = voornaam;
 		this.familienaam = familienaam;
 		this.wedde = wedde;
 		this.emailAdres = emailAdres;
 		this.geslacht = geslacht;
 		this.bijnamen = new LinkedHashSet<>();
-		setCampus(campus);
+//		setCampus(campus);
 	}
 	protected Docent() {
 	}
@@ -74,15 +72,15 @@ public class Docent implements Serializable {
 	public Geslacht getGeslacht() {
 		return geslacht;
 	}
-	public Campus getCampus() {
-		return campus;
-	}
-	public void setCampus(Campus campus) {
-		if (campus == null) {
-			throw new NullPointerException();
-		}
-		this.campus = campus;
-	}
+//	public Campus getCampus() {
+//		return campus;
+//	}
+//	public void setCampus(Campus campus) {
+//		if (campus == null) {
+//			throw new NullPointerException();
+//		}
+//		this.campus = campus;
+//	}
 	
 	public void opslag(BigDecimal percentage) {
 		if ( percentage.compareTo(BigDecimal.ZERO) <= 0) {
@@ -102,5 +100,20 @@ public class Docent implements Serializable {
 	}
 	public boolean removeBijnaam(String bijnaam) {
 		return bijnamen.remove(bijnaam);
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof Docent)) {
+			return false;
+		}
+		if (emailAdres == null) {
+			return false;
+		}
+		return emailAdres.equalsIgnoreCase(((Docent) object).emailAdres);
+	}
+	@Override
+	public int hashCode() {
+		return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
 	}
 }
