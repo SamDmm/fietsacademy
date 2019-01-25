@@ -20,6 +20,7 @@ public class DocentTest {
 	private Docent nogEensDocent1;
 	private Docent docent2;
 	private Campus campus2;
+	private Verantwoordelijkheid verantwoordelijkheid1;
 	@Before
 	public void before() {
 		campus1 = new Campus("test", new Adres("test", "test", "test", "test"));
@@ -27,6 +28,7 @@ public class DocentTest {
 		nogEensDocent1 = new Docent("test", "test", ORIGINELE_WEDDE, "test@fietsacademy.be", Geslacht.MAN, campus1);
 		docent2 = new Docent("test2", "test2", ORIGINELE_WEDDE, "test2@fietsacademy.be", Geslacht.MAN, campus1);
 		campus2 = new Campus("test2", new Adres("test2", "test2", "test2", "test2"));
+		verantwoordelijkheid1 = new Verantwoordelijkheid("EHBO");
 	}
 	@Test
 	public void opslag() {
@@ -126,5 +128,21 @@ public class DocentTest {
 		assertEquals(1, campus1.getDocenten().size());
 		assertEquals(1, campus2.getDocenten().size());
 		assertTrue(campus2.getDocenten().contains(docent1));
+	}
+	@Test
+	public void verantwoordelijkheidToevoegen() {
+		assertTrue(docent1.getVerantwoordelijkheden().isEmpty());
+		assertTrue(docent1.add(verantwoordelijkheid1));
+		assertEquals(1, docent1.getVerantwoordelijkheden().size());
+		assertTrue(docent1.getVerantwoordelijkheden().contains(verantwoordelijkheid1));
+		assertEquals(1, verantwoordelijkheid1.getDocenten().size());
+		assertTrue(verantwoordelijkheid1.getDocenten().contains(docent1));
+	}
+	@Test
+	public void verantwoordelijkheidVerwijderen() {
+		assertTrue(docent1.add(verantwoordelijkheid1));
+		assertTrue(docent1.remove(verantwoordelijkheid1));
+		assertTrue(docent1.getVerantwoordelijkheden().isEmpty());
+		assertTrue(verantwoordelijkheid1.getDocenten().isEmpty());
 	}
 }

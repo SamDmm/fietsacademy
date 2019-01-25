@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import be.vdab.fietsacademy.entities.Campus;
 import be.vdab.fietsacademy.entities.Docent;
+import be.vdab.fietsacademy.entities.Verantwoordelijkheid;
 import be.vdab.fietsacademy.enums.Geslacht;
 import be.vdab.fietsacademy.queryresults.AantalDocentenPerWedde;
 import be.vdab.fietsacademy.queryresults.IdEnEmailAdres;
@@ -33,7 +34,9 @@ import be.vdab.fietsacademy.valueobjects.Adres;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Sql("/insertCampus.sql")
+@Sql("/insertVerantwoordelijkheid.sql")
 @Sql("/insertDocent.sql")
+@Sql("/insertDocentVerantwoordelijkheid.sql")
 @Import(JpaDocentRepository.class)
 public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
 	private static final String DOCENTEN = "docenten";
@@ -168,5 +171,20 @@ public class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringCo
 		Docent docent = repository.read(idVanTestMan()).get();
 		assertEquals("test", docent.getCampus().getNaam());
 	}
-
+	@Test
+	public void verantwoordelijkhedenLezen() {
+		Docent docent = repository.read(idVanTestMan()).get();
+		assertEquals(1,  docent.getVerantwoordelijkheden().size());
+		assertTrue(docent.getVerantwoordelijkheden().contains(new Verantwoordelijkheid("test")));
+	}
+	@Test
+	public void verantwoordelijkheidToevoegen() {
+		Verantwoordelijkheid verantwoordelijkheid = new Verantwoordelijkheid("test2");
+		manager.persist(verantwoordelijkheid);
+		manager.persist(campus1);
+		repository.create(docent1);
+		docent1.add(verantwoordelijkheid);
+		manager.flush();
+		assertEquals(verantwoordelijkheid.getId(), super.jdbcTemplate.queryForObject("select verantwoordelijkheidid from docentenverantwoordelijkheden where docentid=?", Long.class, docent1.getId()).longValue());
+	}
 }
