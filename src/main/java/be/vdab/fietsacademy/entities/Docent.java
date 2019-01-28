@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -24,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import be.vdab.fietsacademy.enums.Geslacht;
 
@@ -50,6 +52,8 @@ public class Docent implements Serializable {
 	@ManyToMany(mappedBy = "docenten")
 	private Set<Verantwoordelijkheid> verantwoordelijkheden = new LinkedHashSet<>();
 	public static final String MET_CAMPUS = "Docent.metCampus";
+	@Version
+	private Timestamp versie;
 	
 	public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht, Campus campus) {
 		this.voornaam = voornaam;
