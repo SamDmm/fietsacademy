@@ -21,12 +21,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.Table;
 
 import be.vdab.fietsacademy.enums.Geslacht;
 
 @Entity
 @Table(name = "docenten")
+@NamedEntityGraph(name = Docent.MET_CAMPUS, attributeNodes = @NamedAttributeNode("campus"))
 public class Docent implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +49,7 @@ public class Docent implements Serializable {
 	private Campus campus;
 	@ManyToMany(mappedBy = "docenten")
 	private Set<Verantwoordelijkheid> verantwoordelijkheden = new LinkedHashSet<>();
+	public static final String MET_CAMPUS = "Docent.metCampus";
 	
 	public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht, Campus campus) {
 		this.voornaam = voornaam;
